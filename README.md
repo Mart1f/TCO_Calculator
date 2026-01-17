@@ -1,102 +1,165 @@
-🚚🚢 TCO Calculator Project
+## 🚚🚢 TCO Calculator Project
 
-This repository contains a Total Cost of Ownership (TCO) calculator designed to estimate the full lifecycle cost of transportation assets, with a focus on trucks and ships.
+This repository contains a **Total Cost of Ownership (TCO) calculator** designed to estimate the **full lifecycle cost of transportation assets**, with a focus on **trucks and ships**. The tool allows comparing different technologies, such as **diesel and electric powertrains**, using consistent technical and financial assumptions.
 
-The tool allows you to compare different technologies (such as diesel vs. electric powertrains) by analyzing how costs evolve over time instead of looking only at the initial purchase price.
+The project is intended to provide a clear and transparent view of **long-term costs**, going beyond simple purchase price analysis.
 
-🎯 Purpose of the Project
+---
 
-The main goal of this project is to provide a clear and structured understanding of long-term costs by combining:
+## 🎯 Project Purpose
 
-Capital Expenditures (CAPEX) – acquisition, infrastructure, financing, taxes
+The main objective of this project is to understand how different cost components interact over time and to identify the **real cost drivers** of a vehicle or vessel during its operational life.
 
-Operating Expenditures (OPEX) – energy, maintenance, insurance, crew, ports
+The calculator combines:
 
-Residual Value (RV) – remaining value at the end of the operational life
+* **Capital Expenditures (CAPEX)**
+* **Operating Expenditures (OPEX)**
+* **Residual Value (RV)**
+* **Discounting over time** (time value of money)
 
-Discounting – time value of money over the operation period
+All these elements are integrated into a single **Total Cost of Ownership** metric.
 
-By integrating all these components, the calculator highlights the real cost drivers of each scenario.
+---
 
-🧩 Architecture Overview
+## 🧩 Architecture Overview
 
-The system follows a modular architecture, where each cost component is calculated independently:
+The system follows a **modular architecture**, where each cost component is computed independently.
 
-CAPEX module
-Computes all upfront and investment-related costs and derives the Capital Recovery Factor (CRF).
+### CAPEX Module
 
-OPEX modules
-Dedicated calculators for trucks and ships, adapted to their specific cost structures.
+The CAPEX module computes all capital-related costs associated with acquiring and deploying an asset, including:
 
-Residual Value module
-Estimates the remaining value of the asset based on depreciation, usage, technology, and external factors.
+* Vehicle purchase cost
+* Conversion and certification costs
+* Infrastructure investments
+* Registration taxes
+* Financing costs
+* Subsidies
 
-All modules are coordinated by a central orchestration function, which combines the results into a final TCO value.
+The output includes the **total CAPEX**, the **Capital Recovery Factor (CRF)**, and a detailed breakdown of capital costs.
 
-⚙️ How It Works
+---
 
-A single structured input defines the scenario
-(asset type, technology, country, lifetime, discount rate, etc.)
+### OPEX Modules
 
-CAPEX, OPEX, and Residual Value are calculated separately
+Operating expenditures are computed using dedicated OPEX calculators for each asset type:
 
-Costs are discounted over time
+* **Truck OPEX Calculator**
+* **Ship OPEX Calculator**
 
-The final Total Cost of Ownership is computed
+These modules estimate **annual operating costs**, such as:
 
-Results are returned as structured data, ready to be reused
+* Energy or fuel consumption
+* Maintenance
+* Insurance
+* Crew costs (ships only)
+* Port fees and operational taxes (ships only)
 
-📤 Inputs & Outputs
-Inputs
+The result is an **annual OPEX value**, with optional detailed breakdowns depending on the asset.
 
-Asset type (truck or ship)
+---
 
-Powertrain technology
+### Residual Value Module
 
-Country of operation
+The **Residual Value (RV) module** estimates the remaining value of the asset at the end of its operational lifetime.
 
-Operational lifetime
+The calculation accounts for:
 
-Financial parameters (discount rate)
+* Depreciation
+* Usage intensity
+* Powertrain technology
+* Country-specific effects
+* Maintenance assumptions
+* External and health-related impacts
 
-Detailed CAPEX, OPEX, and RV assumptions
+The residual value is then **discounted to present value** and reintegrated into the TCO calculation.
 
-Outputs
+---
 
-Total CAPEX
+## ⚙️ How It Works
 
-Annual OPEX
+* A **single structured input** defines the scenario
+  (asset type, technology, country, operational lifetime, discount rate, etc.)
 
-Residual Value
+* **CAPEX**, **OPEX**, and **Residual Value** are calculated **independently**
 
-Discounted cash flows
+* All costs are **discounted over time**
 
-Total TCO (present value)
+* The **final Total Cost of Ownership** is computed
 
-Equivalent annual cost
+* Results are returned as **structured data**, ready to be reused
 
-All outputs are JSON-serializable, making them easy to visualize, store, or compare.
+---
 
-🧠 Design Philosophy
+## 🧠 Main Orchestration Logic
 
-Modular – each cost block is independent
+All calculations are coordinated by a central function called **`run_tco_scenario`**.
 
-Transparent – detailed breakdowns are preserved
+This function:
 
-Extensible – easy to add new technologies or asset types
+1. Reads all scenario inputs
+2. Runs the CAPEX calculation
+3. Runs the Residual Value calculation
+4. Runs the appropriate OPEX calculation (truck or ship)
+5. Combines all components into a final TCO result
 
-UI-ready – designed to work with dashboards or APIs
+The orchestration logic is **interface-agnostic**, meaning it can be used from:
 
-Engineering-oriented – suitable for technical and analytical use
+* Command-line scripts
+* Web dashboards
+* APIs
+* Decision-support or simulation tools
 
-📊 Typical Use Cases
+---
 
-Comparing diesel vs. electric trucks
+## 📥 Inputs
 
-Evaluating ship electrification scenarios
+The model requires the following inputs:
 
-Supporting fleet investment decisions
+* Asset type (**truck** or **ship**)
+* Powertrain technology
+* Country of operation
+* Operational lifetime
+* Financial parameters (e.g. **discount rate**)
+* Detailed **CAPEX**, **OPEX**, and **Residual Value** assumptions
 
-Performing long-term cost and sustainability analysis
+All inputs are provided through a **single structured input dictionary**.
 
-Feeding results into digital twins or decision tools
+---
+
+## 📤 Outputs
+
+The calculator produces the following outputs:
+
+* Total CAPEX
+* Annual OPEX
+* Residual Value
+* Discounted cash flows
+* **Total TCO (present value)**
+* Equivalent annual cost
+
+All outputs are returned in a **structured and JSON-serializable format**, making them easy to visualize, compare across scenarios, or integrate into other systems.
+
+---
+
+## 🧱 Design Philosophy
+
+The project follows a few key design principles:
+
+* **Modular** – each cost block is independent
+* **Transparent** – detailed breakdowns are preserved
+* **Extensible** – easy to add new technologies or asset types
+* **UI-ready** – outputs are structured for dashboards or APIs
+* **Engineering-oriented** – suitable for technical and analytical use
+
+---
+
+## 📊 Typical Use Cases
+
+* Comparing **diesel vs. electric trucks**
+* Evaluating **ship electrification scenarios**
+* Supporting **fleet investment decisions**
+* Performing **long-term cost and sustainability analysis**
+* Feeding results into **digital twins or decision-support tools**
+
+
