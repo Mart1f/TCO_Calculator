@@ -306,7 +306,7 @@ class ResidualValueCalculator(System):
         try:
             self.compute_depreciation()
             self.compute_impact_health()
-            self.compute_external_factors()
+            #self.compute_external_factors()
 
             self.rv = (self.total_depreciation*self.total_external_factors/ self.total_impact_health)
             print(f"RV computed: €{self.rv:,.2f}")

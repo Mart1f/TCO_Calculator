@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>TCO Dashboard</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body { margin:0; background:#0b0f17; color:#e7eefc; }
+    header { padding:16px 18px; border-bottom:1px solid #1f2a3a; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    h1 { margin:0; font-size:16px; letter-spacing:.2px; }
+    .pill { background:#111a28; border:1px solid #22324a; padding:8px 10px; border-radius:999px; display:flex; gap:10px; align-items:center; }
+    select { background:#111a28; color:#e7eefc; border:1px solid #22324a; border-radius:10px; padding:8px 10px; }
+    main { padding:18px; max-width:1200px; margin:0 auto; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .card { background:#0f1624; border:1px solid #22324a; border-radius:16px; padding:14px; }
+    .card h2 { margin:0 0 10px; font-size:13px; color:#bcd3ff; font-weight:600; }
+    .kpis { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; }
+    .kpi { background:#0b1220; border:1px solid #22324a; border-radius:14px; padding:12px; }
+    .kpi .label { font-size:12px; color:#9db7e6; }
+    .kpi .value { font-size:18px; margin-top:6px; font-weight:700; }
+    .muted { color:#9db7e6; font-size:12px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th, td { padding:8px; border-bottom:1px solid #1f2a3a; text-align:left; }
+    th { color:#9db7e6; font-weight:600; }
+    .span-12{grid-column:span 12;}
+    .span-6{grid-column:span 6;}
+    @media (max-width: 900px){ .kpis{grid-template-columns:repeat(2,1fr);} .span-6{grid-column:span 12;} }
+    details { border:1px solid #22324a; border-radius:12px; padding:10px; background:#0b1220; }
+    summary { cursor:pointer; color:#bcd3ff; font-weight:600; }
+    pre { margin:0; white-space:pre-wrap; word-break:break-word; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TCO Dashboard</h1>
+
+    <form class="pill" method="get" action="/dashboard">
+      <span class="muted">Scenario</span>
+      <select name="scenario" onchange="this.form.submit()">
+        {% for s in scenarios %}
+          <option value="{{s}}" {% if s == scenario %}selected{% endif %}>{{s}}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <div class="muted">
+      {{ results.meta.asset_type }} · {{ results.meta.powertrain_type }} · {{ results.meta.country }} ·
+      {{ results.meta.operation_years }}y · r={{ (results.meta.discount_rate*100)|round(2) }}%
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+
+      <div class="card span-12">
+        <h2>Summary</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Total TCO (PV)</div>
+            <div class="value">€{{ "{:,.2f}".format(results.tco.tco_total) }}</div>
+          </div>
+          <div class="kpi">
+            <div class="label">CAPEX Total</div>
+            <div class="value">€{{ "{:,.2f}".format(results.capex.total) }}</div>
+          </div>
+          <div class="kpi">
+            <div class="label">OPEX Annual</div>
+            <div class="value">€{{ "{:,.2f}".format(results.tco.opex_annual) }}</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Residual Value</div>
+            <div class="value">€{{ "{:,.2f}".format(results.rv.rv) }}</div>
+          </div>
+        </div>
+        <div class="muted" style="margin-top:10px;">
+          Equivalent annual cost: <b>€{{ "{:,.2f}".format(results.tco.equivalent_annual_cost) }}</b>
+          {% if results.tco.tco_per_distance_unit is not none %}
+            · TCO / distance unit: <b>€{{ "{:,.4f}".format(results.tco.tco_per_distance_unit) }}</b>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <h2>CAPEX Breakdown</h2>
+        <table>
+          <tr><th>Item</th><th>Value</th></tr>
+          <tr><td>Vehicle cost</td><td>€{{ "{:,.2f}".format(results.capex.vehicle_cost) }}</td></tr>
+          <tr><td>Infrastructure</td><td>€{{ "{:,.2f}".format(results.capex.infrastructure_cost) }}</td></tr>
+          <tr><td>&nbsp;&nbsp;• Hardware</td><td>€{{ "{:,.2f}".format(results.capex.infrastructure_hardware) }}</td></tr>
+          <tr><td>&nbsp;&nbsp;• Grid connection</td><td>€{{ "{:,.2f}".format(results.capex.infrastructure_grid) }}</td></tr>
+          <tr><td>&nbsp;&nbsp;• Installation</td><td>€{{ "{:,.2f}".format(results.capex.infrastructure_installation) }}</td></tr>
+          <tr><td>Taxes</td><td>€{{ "{:,.2f}".format(results.capex.taxes) }}</td></tr>
+          <tr><td>Financing cost</td><td>€{{ "{:,.2f}".format(results.capex.financing_cost) }}</td></tr>
+          <tr><td>Subsidies</td><td>-€{{ "{:,.2f}".format(results.capex.subsidies) }}</td></tr>
+          <tr><td><b>Total CAPEX</b></td><td><b>€{{ "{:,.2f}".format(results.capex.total) }}</b></td></tr>
+          <tr><td>CRF</td><td>{{ "{:.4f}".format(results.capex.crf) }}</td></tr>
+        </table>
+      </div>
+
+      <div class="card span-6">
+        <h2>OPEX Breakdown</h2>
+        <table>
+          <tr><th>Item</th><th>Value</th></tr>
+          {% if results.opex.taxes is defined %}<tr><td>Taxes</td><td>€{{ "{:,.2f}".format(results.opex.taxes) }}</td></tr>{% endif %}
+          {% if results.opex.ports is defined %}<tr><td>Ports</td><td>€{{ "{:,.2f}".format(results.opex.ports) }}</td></tr>{% endif %}
+          {% if results.opex.insurance is defined %}<tr><td>Insurance</td><td>€{{ "{:,.2f}".format(results.opex.insurance) }}</td></tr>{% endif %}
+          {% if results.opex.crew is defined %}<tr><td>Crew</td><td>€{{ "{:,.2f}".format(results.opex.crew) }}</td></tr>{% endif %}
+          {% if results.opex.maintenance is defined %}<tr><td>Maintenance</td><td>€{{ "{:,.2f}".format(results.opex.maintenance) }}</td></tr>{% endif %}
+          {% if results.opex.energy is defined %}<tr><td>Energy</td><td>€{{ "{:,.2f}".format(results.opex.energy) }}</td></tr>{% endif %}
+          <tr><td><b>Annual OPEX</b></td><td><b>€{{ "{:,.2f}".format(results.opex.opex_total) }}</b></td></tr>
+        </table>
+        <div class="muted" style="margin-top:8px;">
+          (Truck scenarios may show fewer breakdown lines depending on your calculator outputs.)
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Residual Value Breakdown</h2>
+        <table>
+          <tr><th>Item</th><th>Value</th></tr>
+          <tr><td>Total depreciation</td><td>€{{ "{:,.2f}".format(results.rv.total_depreciation) }}</td></tr>
+          <tr><td>Impact/health penalties</td><td>€{{ "{:,.2f}".format(results.rv.total_impact_health) }}</td></tr>
+          <tr><td>External factors</td><td>€{{ "{:,.2f}".format(results.rv.total_external_factors) }}</td></tr>
+          <tr><td><b>Residual value</b></td><td><b>€{{ "{:,.2f}".format(results.rv.rv) }}</b></td></tr>
+        </table>
+      </div>
+
+      <div class="card span-6">
+        <h2>TCO Details</h2>
+        <table>
+          <tr><th>Item</th><th>Value</th></tr>
+          <tr><td>RV discounted (PV)</td><td>€{{ "{:,.2f}".format(results.tco.rv_discounted) }}</td></tr>
+          <tr><td>CAPEX component</td><td>€{{ "{:,.2f}".format(results.tco.capex_component) }}</td></tr>
+          <tr><td>OPEX component (PV)</td><td>€{{ "{:,.2f}".format(results.tco.opex_component_pv) }}</td></tr>
+          <tr><td><b>Total TCO (PV)</b></td><td><b>€{{ "{:,.2f}".format(results.tco.tco_total) }}</b></td></tr>
+        </table>
+
+        <details style="margin-top:10px;">
+          <summary>Show OPEX PV stream (years)</summary>
+          <table style="margin-top:8px;">
+            <tr><th>Year</th><th>PV</th></tr>
+            {% for item in results.tco.opex_pv_details %}
+              <tr>
+                <td>{{ item.year }}</td>
+                <td>€{{ "{:,.2f}".format(item.pv) }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </details>
+      </div>
+
+      <div class="card span-12">
+        <h2>Raw Inputs / Output (JSON)</h2>
+        <details open>
+          <summary>Show JSON</summary>
+          <pre>{{ results | tojson(indent=2) }}</pre>
+        </details>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>
