@@ -66,6 +66,7 @@
               "E_DIESEL": 0,
               "GNV": 3000,
               "LNG": 3000,
+              "HICE": 30000,
               "BEV": 25000,
               "FCET": 30000,
               "HEV": 0,
@@ -332,73 +333,164 @@
             "ctv_medium": 0.1765,
             "ctv_large": 0.1765
           },
-          "external_factors": {
-          "energy_price_factor": {
-            "DIESEL": 0.65,
-            "BIODIESEL": 0.70,
-            "HVO": 0.75,
-            "LNG": 0.60,
-            "BEV": 0.23,
-            "PHEV": 0.65,
-            "FCEV": 5.50
-          },
-          "CO2_taxes_factor": {
-          "DIESEL": -0.35,
-          "BEV": -0.05,
-          "PHEV": -0.15,
-          "FCEV": -0.05,
-          "LNG": -0.25,
-          "HVO": -0.10,
-          "BIODIESEL": -0.10
-        },
-          "subsidies_factor": {
-            "DIESEL": 0.0,
-            "BIODIESEL": 0.0,
-            "HVO": 0.0,
-            "LNG": 0.0,
-            "BEV": 0.0,
-            "PHEV": 0.0,
-            "FCEV": 0.0
-          }
-          },
-          "yearly_obsolescence_rate": {
-            "DIESEL": 0.03,
-            "BIODIESEL": 0.03,
-            "HVO": 0.03,
-            "LNG": 0.03,
-            "BEV": 0.05,
-            "PHEV": 0.04,
-            "FCEV": 0.06
-          },
-          "depreciation": {
-            "depreciation_rate_per_year": {
-              "DIESEL": 0.04,
-              "BIODIESEL": 0.04,
-              "HVO": 0.04,
-              "LNG": 0.04,
-              "BEV": 0.05,
-              "PHEV": 0.05,
-              "FCEV": 0.06
+          "external_factors_ship": {
+            "energy_growth_rate": 0.04,
+            "energy_price_factor": {
+              "DIESEL": 0.20,
+              "BIODIESEL": 0.18,
+              "HVO": 0.15,
+              "E_DIESEL": 0.12,
+              "BEV": 0.10,
+              "FCET": 0.08,
+              "HEV": 0.15,
+              "HICE": 0.10,
+              "LNG": 0.16
             },
-            "r_usage": {
-              "DIESEL": 0.03,
-              "BIODIESEL": 0.03,
-              "HVO": 0.03,
-              "LNG": 0.03,
-              "BEV": 0.04,
-              "PHEV": 0.035,
-              "FCEV": 0.05
+            "co2_factor": {
+              "DIESEL": -0.02,
+              "BIODIESEL": -0.015,
+              "HVO": -0.015,
+              "E_DIESEL": -0.01,
+              "BEV": 0.0,
+              "FCET": 0.0,
+              "HEV": -0.01,
+              "HICE": -0.005,
+              "LNG": -0.012
             },
-            "coef_depreciation_maintenance": {
-              "DIESEL": 0.06,
-              "BIODIESEL": 0.06,
-              "HVO": 0.06,
-              "LNG": 0.06,
-              "BEV": 0.05,
-              "PHEV": 0.06,
-              "FCEV": 0.07
+            "subsidy_factor": 0.30,
+            "min_external_factor": 0.85,
+            "max_external_factor": 1.15
+          },
+          "rv_ship": {
+            "ro_pax_small": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.047,
+                "DIESEL": 0.047,
+                "BIODIESEL": 0.047,
+                "HVO": 0.047,
+                "E_DIESEL": 0.047,
+                "BEV": 0.052,
+                "FCET": 0.057,
+                "HEV": 0.050,
+                "HICE": 0.052,
+                "LNG": 0.047
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000011,
+                "DIESEL": 0.00000011,
+                "BIODIESEL": 0.00000011,
+                "HVO": 0.00000011,
+                "E_DIESEL": 0.00000011,
+                "BEV": 0.00000013,
+                "FCET": 0.00000016,
+                "HEV": 0.00000012,
+                "HICE": 0.00000013,
+                "LNG": 0.00000012
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
+            },
+            "ro_pax_medium": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.045,
+                "DIESEL": 0.045,
+                "BIODIESEL": 0.045,
+                "HVO": 0.045,
+                "E_DIESEL": 0.045,
+                "BEV": 0.050,
+                "FCET": 0.055,
+                "HEV": 0.048,
+                "HICE": 0.050,
+                "LNG": 0.045
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000010,
+                "DIESEL": 0.00000010,
+                "BIODIESEL": 0.00000010,
+                "HVO": 0.00000010,
+                "E_DIESEL": 0.00000010,
+                "BEV": 0.00000012,
+                "FCET": 0.00000015,
+                "HEV": 0.00000011,
+                "HICE": 0.00000012,
+                "LNG": 0.00000011
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
+            },
+            "ro_pax_large": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.043,
+                "DIESEL": 0.043,
+                "BIODIESEL": 0.043,
+                "HVO": 0.043,
+                "E_DIESEL": 0.043,
+                "BEV": 0.048,
+                "FCET": 0.053,
+                "HEV": 0.046,
+                "HICE": 0.048,
+                "LNG": 0.043
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000009,
+                "DIESEL": 0.00000009,
+                "BIODIESEL": 0.00000009,
+                "HVO": 0.00000009,
+                "E_DIESEL": 0.00000009,
+                "BEV": 0.00000011,
+                "FCET": 0.00000014,
+                "HEV": 0.00000010,
+                "HICE": 0.00000011,
+                "LNG": 0.00000010
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
             }
           }
+
+
 
     },
      {
@@ -717,65 +809,165 @@
             "ctv_medium": 0.1765,
             "ctv_large": 0.1765
           },
-          "external_factors": {
-          "energy_price_factor": {
-            "DIESEL": 0.70,
-            "BIODIESEL": 0.75,
-            "HVO": 0.80,
-            "LNG": 0.65,
-            "BEV": 0.24,
-            "PHEV": 0.70,
-            "FCEV": 5.50
-          },
-          "CO2_taxes_factor": 80.0,
-          "subsidies_factor": {
-            "DIESEL": 0.0,
-            "BIODIESEL": 25000.0,
-            "HVO": 25000.0,
-            "LNG": 60000.0,
-            "BEV": 180000.0,
-            "PHEV": 90000.0,
-            "FCEV": 280000.0
-          }
-          },
-          "yearly_obsolescence_rate": {
-            "DIESEL": 0.03,
-            "BIODIESEL": 0.03,
-            "HVO": 0.03,
-            "LNG": 0.03,
-            "BEV": 0.05,
-            "PHEV": 0.04,
-            "FCEV": 0.06
-          },
-          "depreciation": {
-            "depreciation_rate_per_year": {
-              "DIESEL": 0.04,
-              "BIODIESEL": 0.04,
-              "HVO": 0.04,
-              "LNG": 0.04,
-              "BEV": 0.05,
-              "PHEV": 0.05,
-              "FCEV": 0.06
+          "external_factors_ship": {
+            "energy_growth_rate": 0.04,
+            "energy_price_factor": {
+              "DIESEL": 0.20,
+              "BIODIESEL": 0.18,
+              "HVO": 0.15,
+              "E_DIESEL": 0.12,
+              "BEV": 0.10,
+              "FCET": 0.08,
+              "HEV": 0.15,
+              "HICE": 0.10,
+              "LNG": 0.16
             },
-            "r_usage": {
-              "DIESEL": 0.03,
-              "BIODIESEL": 0.03,
-              "HVO": 0.03,
-              "LNG": 0.03,
-              "BEV": 0.04,
-              "PHEV": 0.035,
-              "FCEV": 0.05
+            "co2_factor": {
+              "DIESEL": -0.02,
+              "BIODIESEL": -0.015,
+              "HVO": -0.015,
+              "E_DIESEL": -0.01,
+              "BEV": 0.0,
+              "FCET": 0.0,
+              "HEV": -0.01,
+              "HICE": -0.005,
+              "LNG": -0.012
             },
-            "coef_depreciation_maintenance": {
-              "DIESEL": 0.06,
-              "BIODIESEL": 0.06,
-              "HVO": 0.06,
-              "LNG": 0.06,
-              "BEV": 0.05,
-              "PHEV": 0.06,
-              "FCEV": 0.07
+            "subsidy_factor": 0.30,
+            "min_external_factor": 0.85,
+            "max_external_factor": 1.15
+          },
+          "rv_ship": {
+            "ro_pax_small": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.047,
+                "DIESEL": 0.047,
+                "BIODIESEL": 0.047,
+                "HVO": 0.047,
+                "E_DIESEL": 0.047,
+                "BEV": 0.052,
+                "FCET": 0.057,
+                "HEV": 0.050,
+                "HICE": 0.052,
+                "LNG": 0.047
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000011,
+                "DIESEL": 0.00000011,
+                "BIODIESEL": 0.00000011,
+                "HVO": 0.00000011,
+                "E_DIESEL": 0.00000011,
+                "BEV": 0.00000013,
+                "FCET": 0.00000016,
+                "HEV": 0.00000012,
+                "HICE": 0.00000013,
+                "LNG": 0.00000012
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
+            },
+            "ro_pax_medium": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.045,
+                "DIESEL": 0.045,
+                "BIODIESEL": 0.045,
+                "HVO": 0.045,
+                "E_DIESEL": 0.045,
+                "BEV": 0.050,
+                "FCET": 0.055,
+                "HEV": 0.048,
+                "HICE": 0.050,
+                "LNG": 0.045
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000010,
+                "DIESEL": 0.00000010,
+                "BIODIESEL": 0.00000010,
+                "HVO": 0.00000010,
+                "E_DIESEL": 0.00000010,
+                "BEV": 0.00000012,
+                "FCET": 0.00000015,
+                "HEV": 0.00000011,
+                "HICE": 0.00000012,
+                "LNG": 0.00000011
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
+            },
+            "ro_pax_large": {
+              "depr_rate_per_year": {
+                "DEFAULT": 0.043,
+                "DIESEL": 0.043,
+                "BIODIESEL": 0.043,
+                "HVO": 0.043,
+                "E_DIESEL": 0.043,
+                "BEV": 0.048,
+                "FCET": 0.053,
+                "HEV": 0.046,
+                "HICE": 0.048,
+                "LNG": 0.043
+              },
+              "depr_rate_per_unit": {
+                "DEFAULT": 0.00000009,
+                "DIESEL": 0.00000009,
+                "BIODIESEL": 0.00000009,
+                "HVO": 0.00000009,
+                "E_DIESEL": 0.00000009,
+                "BEV": 0.00000011,
+                "FCET": 0.00000014,
+                "HEV": 0.00000010,
+                "HICE": 0.00000011,
+                "LNG": 0.00000010
+              },
+              "obsolescence_rate": {
+                "DEFAULT": 0.02,
+                "DIESEL": 0.02,
+                "BIODIESEL": 0.02,
+                "HVO": 0.02,
+                "E_DIESEL": 0.02,
+                "BEV": 0.03,
+                "FCET": 0.035,
+                "HEV": 0.025,
+                "HICE": 0.03,
+                "LNG": 0.025
+              },
+              "maint_penalty_coef": 2.0,
+              "min_health_factor": 0.35,
+              "min_floor_fraction": 0.10,
+              "max_total_depr_fraction": 0.85
             }
           }
+
+
+
     }
     
     ],

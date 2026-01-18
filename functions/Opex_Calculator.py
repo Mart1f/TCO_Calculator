@@ -173,7 +173,7 @@ class ShipOPEXCalculator(System):
 
         
 
-        self.o_insurance = (insurance_rate * (vp.purchase_cost - RV_ship))*12
+        self.o_insurance = (insurance_rate * (vp.purchase_cost - RV_ship))
 
 
     # ==================== O_CREW SHIP ====================

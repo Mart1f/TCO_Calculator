@@ -151,6 +151,102 @@
       </div>
 
       <div class="card span-12">
+  <h2>Scenario Inputs (what is being used)</h2>
+  <div class="kpis" style="margin-bottom:10px;">
+    <div class="kpi">
+      <div class="label">Asset type</div>
+      <div class="value">{{ results.meta.asset_type }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Powertrain</div>
+      <div class="value">{{ results.meta.powertrain_type }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Country</div>
+      <div class="value">{{ results.meta.country }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Years / Discount</div>
+      <div class="value">{{ results.meta.operation_years }}y · {{ (results.meta.discount_rate*100)|round(2) }}%</div>
+    </div>
+  </div>
+
+  <div class="grid" style="gap:12px;">
+    <div class="card span-6" style="padding:12px;">
+      <h2>CAPEX inputs</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        {% for k, v in (results.inputs.capex or {}).items() %}
+          <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="card span-6" style="padding:12px;">
+      <h2>Residual value (RV) inputs</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        {% for k, v in (results.inputs.rv or {}).items() %}
+          <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    {% if results.meta.asset_type == "ship" %}
+    <div class="card span-12" style="padding:12px;">
+      <h2>Ship OPEX inputs</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        {% for k, v in (results.inputs.opex_ship or {}).items() %}
+          <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% else %}
+    <div class="card span-12" style="padding:12px;">
+      <h2>Truck OPEX inputs</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        {% for k, v in (results.inputs.opex_truck or {}).items() %}
+          <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <details style="margin-top:12px;">
+    <summary>Show full raw input dictionary (JSON)</summary>
+    <pre style="margin-top:10px;">{{ results.inputs | tojson(indent=2) }}</pre>
+  </details>
+</div>
+
+<div class="card span-12">
+  <h2>Inputs actually applied (sanity check)</h2>
+
+  <div class="grid">
+    <div class="card span-6" style="padding:12px;">
+      <h2>CAPEX applied meta</h2>
+      <pre>{{ results.capex.meta | tojson(indent=2) }}</pre>
+    </div>
+
+    <div class="card span-6" style="padding:12px;">
+      <h2>RV applied meta</h2>
+      <pre>{{ results.rv.meta | tojson(indent=2) }}</pre>
+    </div>
+
+    {% if results.opex.meta is defined %}
+    <div class="card span-12" style="padding:12px;">
+      <h2>OPEX applied meta</h2>
+      <pre>{{ results.opex.meta | tojson(indent=2) }}</pre>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+
+
+      <div class="card span-12">
         <h2>Raw Inputs / Output (JSON)</h2>
         <details open>
           <summary>Show JSON</summary>

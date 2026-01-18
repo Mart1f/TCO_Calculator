@@ -162,6 +162,43 @@ def run_rv(rv_inputs: dict, verbose: bool = False) -> dict:
         }
     }
 
+def run_rv_ship(rv_inputs: dict, ship_inputs: dict, verbose: bool=False) -> dict:
+    """
+    
+    Usa ship_class, GT, years, maintenance, etc.
+    """
+    from functions.rv_ship_calculator import ResidualValueShipCalculator
+
+    rv_sys = ResidualValueShipCalculator("rv_ship", ship_class=ship_inputs.get("ship_class", "ro_pax_medium"))
+
+    rv_sys.in_vehicle_properties.type_energy = rv_inputs["type_energy"]
+    rv_sys.in_vehicle_properties.registration_country = rv_inputs["registration_country"]
+    rv_sys.in_vehicle_properties.purchase_cost = float(rv_inputs["purchase_cost"])
+    rv_sys.in_vehicle_properties.year_purchase = int(rv_inputs["year_purchase"])
+    rv_sys.in_vehicle_properties.current_year = int(rv_inputs["current_year"])
+
+    # para ships: travel_measure = distancia total en vida (recomendado)
+    # si tu input era anual, conviértelo a total:
+    annual_dist = float(ship_inputs.get("annual_distance_travel", ship_inputs.get("annual_dist", 0.0)))
+    years = rv_sys.in_vehicle_properties.current_year - rv_sys.in_vehicle_properties.year_purchase
+    rv_sys.in_vehicle_properties.travel_measure = float(annual_dist * max(years, 0))
+
+    rv_sys.in_vehicle_properties.maintenance_cost = float(ship_inputs.get("maintenance_cost", 0.0))
+    rv_sys.in_vehicle_properties.GT = float(ship_inputs.get("GT", 0.0))
+
+    rv_sys.add_driver(RunOnce("run_rv_ship"))
+    rv_sys.run_drivers()
+
+    print("DEBUG: using run_rv_ship()")
+
+
+    return {
+        "rv": float(rv_sys.rv),
+        "total_depreciation": float(rv_sys.depreciated_value),
+        "total_external_factors": float(rv_sys.external_factor),
+        "total_impact_health": float(rv_sys.health_factor),
+        "meta": {"type": "ship", "ship_class": ship_inputs.get("ship_class", "")}
+    }
 
 
 # ======================================================================
@@ -176,9 +213,17 @@ def run_tco_scenario(user_inputs: dict, verbose: bool = False) -> dict:
     capex_total = float(capex["total"])
     crf = float(capex["crf"])
 
+    print("DEBUG asset_type:", asset_type)
+
+    
     # 2) RV (dict)
-    rv = run_rv(user_inputs["rv"], verbose=verbose)
+    if asset_type == "ship":
+        rv = run_rv_ship(user_inputs["rv"], user_inputs["opex_ship"], verbose=verbose)
+    else:
+        rv = run_rv(user_inputs["rv"], verbose=verbose)
+
     rv_value = float(rv["rv"])
+
 
     # 3) OPEX (dict)
     if asset_type == "truck":
