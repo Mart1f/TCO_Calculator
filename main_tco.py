@@ -162,42 +162,49 @@ def run_rv(rv_inputs: dict, verbose: bool = False) -> dict:
         }
     }
 
-def run_rv_ship(rv_inputs: dict, ship_inputs: dict, verbose: bool=False) -> dict:
-    """
-    
-    Usa ship_class, GT, years, maintenance, etc.
-    """
+def run_rv_ship(rv_inputs: dict, ship_inputs: dict, verbose: bool = False) -> dict:
     from functions.rv_ship_calculator import ResidualValueShipCalculator
+    from cosapp.drivers import RunOnce
 
-    rv_sys = ResidualValueShipCalculator("rv_ship", ship_class=ship_inputs.get("ship_class", "ro_pax_medium"))
+    ship_class = ship_inputs.get("ship_class", "ro_pax_medium")
+    rv_sys = ResidualValueShipCalculator("rv_ship", ship_class=ship_class)
 
-    rv_sys.in_vehicle_properties.type_energy = rv_inputs["type_energy"]
-    rv_sys.in_vehicle_properties.registration_country = rv_inputs["registration_country"]
-    rv_sys.in_vehicle_properties.purchase_cost = float(rv_inputs["purchase_cost"])
-    rv_sys.in_vehicle_properties.year_purchase = int(rv_inputs["year_purchase"])
-    rv_sys.in_vehicle_properties.current_year = int(rv_inputs["current_year"])
+    type_energy = rv_inputs.get("type_energy", ship_inputs.get("type_energy", "DIESEL"))
+    registration_country = rv_inputs.get("registration_country", ship_inputs.get("registration_country", "France"))
+    purchase_cost = float(rv_inputs.get("purchase_cost", ship_inputs.get("purchase_price", 0.0)))
+    year_purchase = int(rv_inputs.get("year_purchase", rv_inputs.get("powertrain_model_year", 0)))
+    current_year = int(rv_inputs.get("current_year", year_purchase))
 
-    # para ships: travel_measure = distancia total en vida (recomendado)
-    # si tu input era anual, conviértelo a total:
-    annual_dist = float(ship_inputs.get("annual_distance_travel", ship_inputs.get("annual_dist", 0.0)))
-    years = rv_sys.in_vehicle_properties.current_year - rv_sys.in_vehicle_properties.year_purchase
-    rv_sys.in_vehicle_properties.travel_measure = float(annual_dist * max(years, 0))
+    rv_sys.in_vehicle_properties.type_energy = type_energy
+    rv_sys.in_vehicle_properties.registration_country = registration_country
+    rv_sys.in_vehicle_properties.purchase_cost = purchase_cost
+    rv_sys.in_vehicle_properties.year_purchase = year_purchase
+    rv_sys.in_vehicle_properties.current_year = current_year
 
-    rv_sys.in_vehicle_properties.maintenance_cost = float(ship_inputs.get("maintenance_cost", 0.0))
+    years = max(0, current_year - year_purchase)
+
+    if "travel_measure" in rv_inputs and rv_inputs["travel_measure"] is not None:
+        travel_measure = float(rv_inputs["travel_measure"])
+    else:
+        annual_dist = float(ship_inputs.get("annual_distance_travel", ship_inputs.get("annual_dist", 0.0)))
+        travel_measure = annual_dist * years
+
+    rv_sys.in_vehicle_properties.travel_measure = max(0.0, travel_measure)
+    rv_sys.in_vehicle_properties.maintenance_cost = float(ship_inputs.get("maintenance_cost", rv_inputs.get("maintenance_cost", 0.0)))
     rv_sys.in_vehicle_properties.GT = float(ship_inputs.get("GT", 0.0))
 
     rv_sys.add_driver(RunOnce("run_rv_ship"))
     rv_sys.run_drivers()
 
-    print("DEBUG: using run_rv_ship()")
-
+    if verbose:
+        print("DEBUG: using run_rv_ship()", ship_class, type_energy, registration_country, years, rv_sys.rv)
 
     return {
         "rv": float(rv_sys.rv),
         "total_depreciation": float(rv_sys.depreciated_value),
         "total_external_factors": float(rv_sys.external_factor),
         "total_impact_health": float(rv_sys.health_factor),
-        "meta": {"type": "ship", "ship_class": ship_inputs.get("ship_class", "")}
+        "meta": {"type": "ship", "ship_class": ship_class}
     }
 
 
